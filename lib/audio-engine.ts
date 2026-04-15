@@ -99,8 +99,8 @@ async function playDistorted(url: string): Promise<void> {
   emit("speaking-start");
 
   const pitch = Math.random() * 24 - 12;
-  const reverbDecay = 1 + Math.random() * 3;
-  const reverbWet = 0.3 + Math.random() * 0.4;
+  const reverbDecay = 0.5 + Math.random() * 1.5;
+  const reverbWet = 0.15 + Math.random() * 0.25;
 
   const pitchShift = new Tone.PitchShift({ pitch });
   const reverb = new Tone.Reverb({ decay: reverbDecay, wet: reverbWet });
@@ -133,7 +133,7 @@ async function playDistorted(url: string): Promise<void> {
     const randomSound = SOUNDS[Math.floor(Math.random() * SOUNDS.length)];
     const preloaded = soundboardPlayers.get(randomSound.id);
     if (preloaded && preloaded.loaded) {
-      const overlayGain = new Tone.Gain(0.3).toDestination();
+      const overlayGain = new Tone.Gain(0.12).toDestination();
       const overlayPitch = new Tone.PitchShift({ pitch: Math.random() * 4 - 2 });
       const overlayPlayer = new Tone.Player(preloaded.buffer);
       overlayPlayer.connect(overlayPitch);
