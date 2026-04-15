@@ -5,8 +5,9 @@ let mic: Tone.UserMedia | null = null;
 let recorder: Tone.Recorder | null = null;
 let lastRecordingUrl: string | null = null;
 let meter: Tone.Meter | null = null;
-let soundboardPlayers: Map<string, Tone.Player> = new Map();
-let isInitialized = false;
+const soundboardPlayers: Map<string, Tone.Player> = new Map();
+let contextStarted = false;
+let soundsLoaded = false;
 
 export type AudioEventCallback = (event: "speaking-start" | "speaking-end" | "listening-start" | "listening-end" | "soundboard-hit") => void;
 
@@ -21,11 +22,20 @@ function emit(event: Parameters<AudioEventCallback>[0]) {
   eventCallbacks.forEach((cb) => cb(event));
 }
 
+// Must be called from a user gesture (click/tap). Starts the audio context.
 export async function initAudio(): Promise<void> {
-  if (isInitialized) return;
-  await Tone.start();
+  if (!contextStarted) {
+    await Tone.start();
+    contextStarted = true;
+    meter = new Tone.Meter();
+    // Start loading sounds in the background (don't await)
+    loadSounds();
+  }
+}
 
-  // Preload all soundboard players and wait for buffers to load
+async function loadSounds(): Promise<void> {
+  if (soundsLoaded) return;
+
   const loadPromises = SOUNDS.map((sound) => {
     return new Promise<void>((resolve) => {
       const player = new Tone.Player({
@@ -35,10 +45,9 @@ export async function initAudio(): Promise<void> {
       soundboardPlayers.set(sound.id, player);
     });
   });
-  await Promise.all(loadPromises);
 
-  meter = new Tone.Meter();
-  isInitialized = true;
+  await Promise.all(loadPromises);
+  soundsLoaded = true;
 }
 
 export async function startRecording(): Promise<boolean> {
@@ -51,7 +60,8 @@ export async function startRecording(): Promise<boolean> {
     recorder.start();
     emit("listening-start");
     return true;
-  } catch {
+  } catch (e) {
+    console.error("startRecording failed:", e);
     return false;
   }
 }
@@ -100,8 +110,14 @@ async function playDistorted(url: string): Promise<void> {
   reverb.connect(meter!);
   meter!.connect(Tone.getDestination());
 
-  const player = new Tone.Player(url);
-  player.connect(pitchShift);
+  // Wait for this specific buffer to load
+  const player = await new Promise<Tone.Player>((resolve) => {
+    const p = new Tone.Player({
+      url,
+      onload: () => resolve(p),
+    });
+    p.connect(pitchShift);
+  });
 
   player.onstop = () => {
     emit("speaking-end");
@@ -112,31 +128,38 @@ async function playDistorted(url: string): Promise<void> {
 
   player.start();
 
-  const randomSound = SOUNDS[Math.floor(Math.random() * SOUNDS.length)];
-  const overlay = soundboardPlayers.get(randomSound.id);
-  if (overlay && overlay.loaded) {
-    const overlayGain = new Tone.Gain(0.3).toDestination();
-    const overlayPitch = new Tone.PitchShift({ pitch: Math.random() * 4 - 2 });
-    const overlayPlayer = new Tone.Player(randomSound.file);
-    overlayPlayer.connect(overlayPitch);
-    overlayPitch.connect(overlayGain);
-    overlayPlayer.onstop = () => {
-      overlayPlayer.dispose();
-      overlayPitch.dispose();
-      overlayGain.dispose();
-    };
-    setTimeout(() => overlayPlayer.start(), 200 + Math.random() * 300);
+  // Layer a random brainrot sound at ~30% volume
+  if (soundsLoaded) {
+    const randomSound = SOUNDS[Math.floor(Math.random() * SOUNDS.length)];
+    const preloaded = soundboardPlayers.get(randomSound.id);
+    if (preloaded && preloaded.loaded) {
+      const overlayGain = new Tone.Gain(0.3).toDestination();
+      const overlayPitch = new Tone.PitchShift({ pitch: Math.random() * 4 - 2 });
+      const overlayPlayer = new Tone.Player(preloaded.buffer);
+      overlayPlayer.connect(overlayPitch);
+      overlayPitch.connect(overlayGain);
+      overlayPlayer.onstop = () => {
+        overlayPlayer.dispose();
+        overlayPitch.dispose();
+        overlayGain.dispose();
+      };
+      setTimeout(() => {
+        try { overlayPlayer.start(); } catch { /* ignore if disposed */ }
+      }, 200 + Math.random() * 300);
+    }
   }
 }
 
-export function playSoundboard(soundId: string): void {
-  if (!isInitialized) return;
+export async function playSoundboard(soundId: string): Promise<void> {
+  await initAudio();
+  // Ensure sounds are loaded
+  await loadSounds();
+
   emit("soundboard-hit");
 
   const preloaded = soundboardPlayers.get(soundId);
   if (!preloaded || !preloaded.loaded) return;
 
-  // Use the preloaded buffer for a fresh player (polyphony)
   const pitchShift = new Tone.PitchShift({ pitch: Math.random() * 4 - 2 });
   pitchShift.toDestination();
 

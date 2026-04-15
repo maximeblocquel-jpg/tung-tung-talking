@@ -1,12 +1,11 @@
 "use client";
 
 import { SOUNDS } from "@/lib/sounds";
-import { playSoundboard, initAudio } from "@/lib/audio-engine";
+import { playSoundboard } from "@/lib/audio-engine";
 
 export function Soundboard() {
   async function handlePress(soundId: string) {
-    await initAudio();
-    playSoundboard(soundId);
+    await playSoundboard(soundId);
   }
 
   return (

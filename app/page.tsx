@@ -6,7 +6,7 @@ import { PlaybackButton } from "./components/PlaybackButton";
 import { Soundboard } from "./components/Soundboard";
 import { ShareButton } from "./components/ShareButton";
 import { useAnimationState } from "@/lib/use-animation-state";
-import { playSoundboard, initAudio } from "@/lib/audio-engine";
+import { playSoundboard } from "@/lib/audio-engine";
 import { SOUNDS } from "@/lib/sounds";
 
 export default function Home() {
@@ -14,10 +14,8 @@ export default function Home() {
 
   function handleCharacterTap() {
     handleTap();
-    initAudio().then(() => {
-      const randomSound = SOUNDS[Math.floor(Math.random() * SOUNDS.length)];
-      playSoundboard(randomSound.id);
-    });
+    const randomSound = SOUNDS[Math.floor(Math.random() * SOUNDS.length)];
+    playSoundboard(randomSound.id);
   }
 
   return (
