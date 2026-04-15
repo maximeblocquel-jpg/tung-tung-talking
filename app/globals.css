@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+:root {
+  --color-brainrot-orange: #ff6b35;
+  --color-brainrot-yellow: #f7c948;
+  --color-brainrot-dark: #0d0d1a;
+  --color-brainrot-purple: #2d1b69;
+}
+
+html, body {
+  height: 100dvh;
+  overflow: hidden;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
