@@ -19,22 +19,23 @@ export default function Home() {
   }
 
   return (
-    <main className="h-dvh max-w-[420px] mx-auto flex flex-col bg-[#0d0d1a] relative overflow-hidden">
-      <ShareButton />
+    <main className="h-dvh flex flex-col bg-[#170721] relative overflow-hidden">
+      {/* Ambient background glows */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-[#ffe792]/20 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-[#d873ff]/20 rounded-full blur-[150px]" />
+      </div>
 
-      <header className="bg-gradient-to-r from-[#ff6b35] to-[#f7c948] py-2.5 text-center shrink-0">
-        <h1 className="text-lg font-black tracking-[0.2em] text-[#1a1a2e]">
-          TUNG TUNG TALKING
+      {/* Header */}
+      <header className="fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-violet-950/40 backdrop-blur-xl max-w-[420px] left-1/2 -translate-x-1/2">
+        <h1 className="font-headline font-black tracking-tighter uppercase text-2xl text-[#FF4500] italic">
+          TUNG TUNG
         </h1>
+        <ShareButton />
       </header>
 
-      <div className="flex-1 flex flex-col bg-gradient-to-b from-[#1a1a2e] to-[#2d1b69] relative min-h-0">
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-[10%] right-[15%] text-xl opacity-20 animate-pulse">✦</div>
-          <div className="absolute top-[30%] left-[10%] text-sm opacity-15 animate-pulse" style={{ animationDelay: "1s" }}>✦</div>
-          <div className="absolute bottom-[20%] right-[25%] text-lg opacity-10 animate-pulse" style={{ animationDelay: "2s" }}>✦</div>
-        </div>
-
+      {/* Character zone */}
+      <div className="flex-1 flex flex-col items-center justify-center relative pt-16 min-h-0 max-w-[420px] mx-auto w-full">
         <Character
           state={state}
           mouthOpen={mouthOpen}
@@ -43,14 +44,19 @@ export default function Home() {
         />
       </div>
 
-      <div className="flex items-center justify-center gap-3 py-3 bg-[#1a1a2e] shrink-0">
-        <VoiceRecorder />
-        <PlaybackButton />
-      </div>
+      {/* Bottom controller card */}
+      <section className="relative z-20 px-4 pb-6 max-w-[420px] mx-auto w-full">
+        <div className="glass-panel bg-[rgba(44,22,58,0.4)] rounded-2xl p-5 border border-white/5 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
+          {/* Controls row */}
+          <div className="flex items-center justify-center gap-6 mb-5">
+            <PlaybackButton />
+            <VoiceRecorder />
+          </div>
 
-      <div className="bg-[#111] shrink-0">
-        <Soundboard />
-      </div>
+          {/* Soundboard pills */}
+          <Soundboard />
+        </div>
+      </section>
     </main>
   );
 }

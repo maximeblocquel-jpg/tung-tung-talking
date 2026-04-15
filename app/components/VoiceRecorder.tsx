@@ -28,23 +28,28 @@ export function VoiceRecorder() {
   }, []);
 
   return (
-    <button
-      onPointerDown={handleStart}
-      onPointerUp={handleEnd}
-      onPointerLeave={handleEnd}
-      disabled={micDenied}
-      className={`
-        rounded-full py-2.5 px-6 font-bold text-sm flex items-center gap-2 transition-all
-        ${micDenied
-          ? "bg-gray-600 text-gray-400 cursor-not-allowed"
-          : isRecording
-            ? "bg-red-600 text-white scale-110 shadow-lg shadow-red-500/50"
-            : "bg-red-500 text-white active:scale-95"
-        }
-      `}
-    >
-      <span>{isRecording ? "\u{1F534}" : "\u{1F3A4}"}</span>
-      {micDenied ? "MIC OFF" : isRecording ? "RECORDING..." : "RECORD"}
-    </button>
+    <div className="relative group">
+      {/* Red glow behind button */}
+      <div className={`absolute inset-0 rounded-full blur-xl transition-all ${
+        micDenied ? "bg-gray-500/20" : isRecording ? "bg-[#ff716c]/60 blur-2xl" : "bg-[#ff716c]/40"
+      }`} />
+      <button
+        onPointerDown={handleStart}
+        onPointerUp={handleEnd}
+        onPointerLeave={handleEnd}
+        disabled={micDenied}
+        className={`relative w-20 h-20 rounded-full flex items-center justify-center transition-all ${
+          micDenied
+            ? "bg-gray-700 cursor-not-allowed"
+            : isRecording
+              ? "bg-gradient-to-tr from-[#ff716c] to-[#9f0519] scale-110 shadow-[0_0_40px_rgba(255,113,108,0.6)]"
+              : "bg-gradient-to-tr from-[#ff716c] to-[#9f0519] shadow-[0_0_30px_rgba(255,113,108,0.5)] hover:scale-105 active:scale-90"
+        }`}
+      >
+        <span className="text-white text-3xl">
+          {micDenied ? "🚫" : isRecording ? "🔴" : "🎤"}
+        </span>
+      </button>
+    </div>
   );
 }

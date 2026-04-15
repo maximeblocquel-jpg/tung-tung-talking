@@ -1,10 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --color-brainrot-orange: #ff6b35;
-  --color-brainrot-yellow: #f7c948;
-  --color-brainrot-dark: #0d0d1a;
-  --color-brainrot-purple: #2d1b69;
+  --color-bg: #170721;
+  --color-surface-high: rgba(44, 22, 58, 0.4);
+  --color-primary: #ffe792;
+  --color-secondary: #d873ff;
+  --color-error: #ff716c;
+  --color-error-dark: #9f0519;
+  --color-on-surface: #f5ddff;
+  --color-outline-variant: rgba(84, 65, 95, 0.1);
 }
 
 html, body {
@@ -12,7 +16,26 @@ html, body {
   overflow: hidden;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+  font-family: 'Be Vietnam Pro', sans-serif;
+  background: var(--color-bg);
+  color: var(--color-on-surface);
 }
+
+.font-headline {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.glass-panel {
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+}
+
+.glow-aura {
+  filter: drop-shadow(0 0 30px #d873ff);
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* Character animations */
 @keyframes bounce-gentle {

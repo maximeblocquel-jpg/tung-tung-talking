@@ -19,16 +19,13 @@ export function PlaybackButton() {
     <button
       onClick={() => replayLast()}
       disabled={!available}
-      className={`
-        rounded-full py-2.5 px-6 font-bold text-sm flex items-center gap-2 transition-all
-        ${available
-          ? "bg-gray-700 text-white active:scale-95"
-          : "bg-gray-800 text-gray-600 cursor-not-allowed"
-        }
-      `}
+      className={`p-4 rounded-full transition-all ${
+        available
+          ? "bg-[#3a214b] text-[#baa3c6] hover:scale-110 active:scale-95"
+          : "bg-[#3a214b]/50 text-[#baa3c6]/30 cursor-not-allowed"
+      }`}
     >
-      <span>▶</span>
-      PLAY
+      <span className="text-2xl">▶</span>
     </button>
   );
 }

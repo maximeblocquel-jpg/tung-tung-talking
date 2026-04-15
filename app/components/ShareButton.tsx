@@ -26,10 +26,10 @@ export function ShareButton() {
   return (
     <button
       onClick={handleShare}
-      className="absolute top-3 right-3 z-10 bg-white/10 backdrop-blur-sm rounded-full w-9 h-9 flex items-center justify-center text-white/70 hover:text-white hover:bg-white/20 transition-all text-sm"
+      className="text-violet-300 hover:scale-110 hover:text-[#d873ff] transition-all active:brightness-125 text-lg"
       aria-label="Share"
     >
-      {copied ? "\u2713" : "\u2197"}
+      {copied ? "✓" : "↗"}
     </button>
   );
 }
