@@ -30,7 +30,7 @@ export default function Home() {
         </h1>
       </header>
 
-      <div className="flex-1 bg-gradient-to-b from-[#1a1a2e] to-[#2d1b69] relative min-h-0">
+      <div className="flex-1 flex flex-col bg-gradient-to-b from-[#1a1a2e] to-[#2d1b69] relative min-h-0">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute top-[10%] right-[15%] text-xl opacity-20 animate-pulse">✦</div>
           <div className="absolute top-[30%] left-[10%] text-sm opacity-15 animate-pulse" style={{ animationDelay: "1s" }}>✦</div>

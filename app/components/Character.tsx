@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { AnimationState, TapReaction } from "@/lib/use-animation-state";
 
 interface CharacterProps {
@@ -20,18 +19,17 @@ export function Character({ state, mouthOpen, tapReaction, onTap }: CharacterPro
       className={`flex-1 flex items-center justify-center cursor-pointer select-none min-h-0 ${containerClass}`}
       onClick={onTap}
     >
-      <div
-        className="relative h-full max-h-[50dvh] aspect-[3/4] transition-transform duration-75"
-        style={{ transform: `scale(${speakingScale})` }}
-      >
-        <Image
-          src="/tung-tung-character.jpeg"
-          alt="Tung Tung Tung Sahur"
-          fill
-          className="object-contain drop-shadow-[0_0_30px_rgba(255,107,53,0.3)]"
-          priority
-        />
-      </div>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/tung-tung-character.png"
+        alt="Tung Tung Tung Sahur"
+        className="max-h-[90%] w-auto object-contain transition-transform duration-75"
+        style={{
+          transform: `scale(${speakingScale})`,
+          filter: "drop-shadow(0 0 25px rgba(255,107,53,0.4)) brightness(1.15)",
+        }}
+        draggable={false}
+      />
     </div>
   );
 }
