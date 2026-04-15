@@ -25,10 +25,17 @@ export async function initAudio(): Promise<void> {
   if (isInitialized) return;
   await Tone.start();
 
-  for (const sound of SOUNDS) {
-    const player = new Tone.Player(sound.file).toDestination();
-    soundboardPlayers.set(sound.id, player);
-  }
+  // Preload all soundboard players and wait for buffers to load
+  const loadPromises = SOUNDS.map((sound) => {
+    return new Promise<void>((resolve) => {
+      const player = new Tone.Player({
+        url: sound.file,
+        onload: () => resolve(),
+      }).toDestination();
+      soundboardPlayers.set(sound.id, player);
+    });
+  });
+  await Promise.all(loadPromises);
 
   meter = new Tone.Meter();
   isInitialized = true;
@@ -126,13 +133,14 @@ export function playSoundboard(soundId: string): void {
   if (!isInitialized) return;
   emit("soundboard-hit");
 
-  const sound = SOUNDS.find((s) => s.id === soundId);
-  if (!sound) return;
+  const preloaded = soundboardPlayers.get(soundId);
+  if (!preloaded || !preloaded.loaded) return;
 
+  // Use the preloaded buffer for a fresh player (polyphony)
   const pitchShift = new Tone.PitchShift({ pitch: Math.random() * 4 - 2 });
   pitchShift.toDestination();
 
-  const player = new Tone.Player(sound.file);
+  const player = new Tone.Player(preloaded.buffer);
   player.connect(pitchShift);
   player.onstop = () => {
     player.dispose();
